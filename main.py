@@ -10,10 +10,6 @@ from nltk.tokenize import word_tokenize
 import string
 nltk.download('stopwords')
 nltk.download('punkt')
-import os
-parent_dir_path = os.path.dirname(os.path.realpath(__file__))
-
-print(os.system("ls -l"))
 
 app = FastAPI()
 
