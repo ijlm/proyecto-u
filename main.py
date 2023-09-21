@@ -10,6 +10,10 @@ from nltk.tokenize import word_tokenize
 import string
 nltk.download('stopwords')
 nltk.download('punkt')
+import os
+parent_dir_path = os.path.dirname(os.path.realpath(__file__))
+
+print(os.system("ls -l"))
 
 app = FastAPI()
 
@@ -136,6 +140,6 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+#if __name__ == "__main__":
+#    import uvicorn
+#    uvicorn.run(app, host="127.0.0.1", port=8000)
