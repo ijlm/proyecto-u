@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
 
-        <title>Consulta de Cliente</title>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <link rel="stylesheet" type="text/css" href="../static/styles.css"> <!-- Enlaza el archivo CSS externo -->
+    <title>Consulta de Cliente</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/styles.css"> <!-- Enlaza el archivo CSS externo -->
 
 </head>
+
 <body>
     <section class="form-consult">
         <div class="container">
@@ -18,67 +20,74 @@
             <form id="ClienteRequestForm" class="mt-4">
                 <div class="form-group">
                     <label for="client_id">ID del cliente:</label>
-                    <input type="text" class="form-control" id="client_id" placeholder="Ingrese el ID del cliente" name="client_id" required minlength="1" maxlength="15">
+                    <input type="text" class="form-control" id="client_id" placeholder="Ingrese el ID del cliente"
+                        name="client_id" required minlength="1" maxlength="15">
                 </div>
                 <div class="btn-lb2">
-                    <button type="button" onclick="consultarCliente()">Consultar</button>
+                    <button type="submit" onclick="consultarCliente()">Consultar</button>
                 </div>
             </form>
         </div>
     </section>
-    
+
     <br>
     <section id="existe_cliente" class="result-client hidden">
-        <div>        
+        <div>
             <h3>Nombre cliente: <span id="nombre_cliente"></span></h3>
-        </div>   
-    </section>    
-    <section id="consultar_cliente" class="client-preferences hidden">  
-        <div>        
-            <h3>Preferencias cliente:<br> <span id="preferencias_cliente"></span></h3>
-        </div>    
-    </section>  
+        </div>
+    </section>
+    <section id="consultar_cliente" class="client-preferences hidden">
+        <div>
+            <h3><br> <span id="preferencias_cliente"></span></h3>
+        </div>
+    </section>
     <section id="nuevo_cliente" class="new-client hidden">
         <div>
             <form id="ClienteRequestForm">
-                <h3>Registrar Nuevo cliente</h3>    
-                <input class="form-control" type="text" required min="3" maxlength="20" id="nuevo_nombre_cliente" name="nuevo_nombre_cliente" placeholder="Ingrese el Nombre del cliente">
-                <h3>Preferencias</h3>          
-                <input class="form-control" type="text" required id="registro_preferencia" name="registro_preferencia" placeholder="Ingrese las preferencias del cliente">
+                <h3>Registrar Nuevo cliente</h3>
+                <input class="form-control" type="text" required min="3" maxlength="20" id="nuevo_nombre_cliente"
+                    name="nuevo_nombre_cliente" placeholder="Ingrese el Nombre del cliente">
+                <h3>Preferencias</h3>
+                <input class="form-control" type="text" required id="registro_preferencia" name="registro_preferencia"
+                    placeholder="Ingrese las preferencias del cliente">
                 <br>
                 <div class="btn-lbl">
-                    <button type="button" id="formulario_nueo_cliente" onclick="RegistraCliente()">Registrar</button>                
+                    <button type="button" id="formulario_nueo_cliente" onclick="RegistraCliente()">Registrar</button>
                     <button type="button" id="limpiar_nueva_preferencia">Limpiar</button>
                 </div>
                 <div id="registroClienteOK" class="alert alert-primary hidden" role="alert">
-                       Registro Exitoso
+                    Registro Exitoso
                 </div>
 
             </form>
-        </div>   
+        </div>
     </section>
     <section id="nuevas_preferencias" class="new-order hidden">
         <div>
-            <h3>Registrar Nuevo Pedido:</h3>        
-            <input type="text" class="form-control"  id="nueva_preferencia" name="nueva_preferencia" placeholder="Ingrese el Pedido del cliente">
+            <h3>Registrar Nuevo Pedido:</h3>
+            <input type="text" class="form-control" id="nueva_preferencia" name="nueva_preferencia"
+                placeholder="Ingrese el Pedido del cliente">
             <br>
             <div class="btn-lbl">
-                <button type="button" id="formulario_nuevas_preferencias" onclick="registraPreferencia()">Registrar</button>
+                <button type="button" id="formulario_nuevas_preferencias"
+                    onclick="registraPreferencia()">Registrar</button>
                 <button type="button" id="limpiar_nueva_preferencia2">Limpiar</button>
             </div>
         </div>
-    
-    <p id="salida_registro2" class="hidden">Registro:<span></span></p>
-    <p id="actualizarModelo" style="cursor: pointer; text-decoration: underline; color: rgb(201, 201, 221); font-size: 15px; "  onclick="pedirClaveYActualizarModelo()">Actualizar Modelo</p>
-    </section >
 
-    <script> 
-      
-        document.addEventListener("DOMContentLoaded", function() {            
-            document.getElementById("limpiar_nueva_preferencia2").addEventListener("click", function() {
+        <p id="salida_registro2" class="hidden">Registro:<span></span></p>
+        <p id="actualizarModelo"
+            style="cursor: pointer; text-decoration: underline; color: rgb(201, 201, 221); font-size: 15px; "
+            onclick="pedirClaveYActualizarModelo()">Actualizar Modelo</p>
+    </section>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("limpiar_nueva_preferencia2").addEventListener("click", function () {
                 document.getElementById("nueva_preferencia").value = "";
             });
-            document.getElementById("limpiar_nueva_preferencia").addEventListener("click", function() {                
+            document.getElementById("limpiar_nueva_preferencia").addEventListener("click", function () {
                 document.getElementById("nuevo_nombre_cliente").value = "";
                 document.getElementById("registro_preferencia").value = "";
             });
@@ -86,67 +95,84 @@
 
         function consultarCliente() {
             var client_id = $("#client_id").val();
+            //consultar cliente con tecla con Enter
+            $("#ClienteRequestForm").on("submit", function (event) {
+                event.preventDefault();
+                if (!client_id) {
+                    consultarCliente();
+                    client_id = true; 
+                }
+            });
+
+            $("#client_id").on("click", function (event) {
+                event.preventDefault();
+                if (!client_id) {
+                    consultarCliente();
+                    client_id = true; 
+                }
+            });
 
             fetch('/existe_cliente/', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ client_id: client_id })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.nombre_cliente) {
-                    $("#existe_cliente").removeClass("hidden"); // Mostrar el nombre del cliente
-                    $("#salida_registro2").addClass("hidden");                                        
-                    $("#nombre_cliente").text(data.nombre_cliente);     
-                    $("#nuevo_cliente").addClass("hidden");                     
-                    cargarPreferencias(client_id)
-                    
-                } else {
-                    $("#nuevo_cliente").removeClass("hidden");
-                    //$("#existe_cliente").text("No existe el cliente, registrar");
-                    $("#existe_cliente").addClass("hidden"); // Ocultar el nombre del cliente
+                .then(response => response.json())
+                .then(data => {
+                    if (data.nombre_cliente) {
+                        $("#existe_cliente").removeClass("hidden"); // Mostrar el nombre del cliente
+                        $("#salida_registro2").addClass("hidden");
+                        $("#nombre_cliente").text(data.nombre_cliente);
+                        $("#nuevo_cliente").addClass("hidden");
+                        cargarPreferencias(client_id)
+                        
+
+                    } else {
+                        $("#nuevo_cliente").removeClass("hidden");
+                        //$("#existe_cliente").text("No existe el cliente, registrar");
+                        $("#existe_cliente").addClass("hidden"); // Ocultar el nombre del cliente
+                        $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
+                        $("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
+                        $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
+                    }
+                })
+                .catch(error => {
+                    alert("Ocurrió un error al consultar al cliente.");
+                });
+        }
+
+        function cargarPreferencias(client_id) {
+            fetch('/consultar_cliente/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client_id: client_id })
+            })
+                .then(response => response.json())
+                .then(response => {
+                    var resultHtml = '<div class="table-container"><table>';
+                    resultHtml += '<tr><th>Preferencia</th><th>Cantidad</th><th>Sugerencia</th></tr>'; // Encabezados de la tabla
+                    response.forEach(function (item) {
+                        resultHtml += '<tr>';
+                        resultHtml += '<td>' + item.item + '</td>';
+                        resultHtml += '<td>' + item.cantidad + '</td>';
+                        resultHtml += '<td>' + item.SUGERENCIA + '</td>';
+                        resultHtml += '</tr>';
+                    });
+                    resultHtml += '</table></div>';
+                    $("#preferencias_cliente").html(resultHtml);
+                    $("#consultar_cliente").removeClass("hidden"); // Mostrar las preferencias del cliente
+                    $("#nuevas_preferencias").removeClass("hidden");
+                    $("#nueva_preferencia").text("");
+
+                })
+
+                .catch(error => {
+                    $("#nuevo_cliente").addClass("hidden"); // Ocultar el nombre del cliente
                     $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
                     $("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
                     $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
-                }
-            })
-            .catch(error => {
-                alert("Ocurrió un error al consultar al cliente.");
-            });
-        }
-
-        function cargarPreferencias(client_id){
-            fetch('/consultar_cliente/', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ client_id: client_id })
-            })
-            .then(response => response.json())
-            .then(response => {
-                var resultHtml = '<div class="table-container"><table>';
-                resultHtml += '<tr><th>ITEM</th><th>Cantidad</th><th>Sugerencia</th></tr>'; // Encabezados de la tabla
-                response.forEach(function(item) {
-                    resultHtml += '<tr>';
-                    resultHtml += '<td>' + item.item + '</td>';
-                    resultHtml += '<td>' + item.cantidad + '</td>';
-                    resultHtml += '<td>' + item.SUGERENCIA + '</td>';
-                    resultHtml += '</tr>';
+                    alert("Ocurrió un error al consultar las preferencias del cliente.");
                 });
-                resultHtml += '</table></div>';
-                $("#preferencias_cliente").html(resultHtml);
-                $("#consultar_cliente").removeClass("hidden"); // Mostrar las preferencias del cliente
-                $("#nuevas_preferencias").removeClass("hidden");  
-                $("#nueva_preferencia").text("");                          
-                
-            })
-
-            .catch(error => {
-                $("#nuevo_cliente").addClass("hidden"); // Ocultar el nombre del cliente
-                $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
-                $("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
-                $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
-                alert("Ocurrió un error al consultar las preferencias del cliente.");
-            });
         }
 
         function cargarPreferencias2(client_id) {
@@ -155,48 +181,48 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ client_id: client_id })
             })
-            .then(response => response.json())
-            .then(response => {
-                const labels = response.map(item => item.item);
-                const data = response.map(item => item.cantidad);
-                const config = {
-                    type: 'horizontalBar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Cantidad',
-                            data: data,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            x: {
-                                beginAtZero: true
+                .then(response => response.json())
+                .then(response => {
+                    const labels = response.map(item => item.item);
+                    const data = response.map(item => item.cantidad);
+                    const config = {
+                        type: 'horizontalBar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Cantidad',
+                                data: data,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    beginAtZero: true
+                                }
                             }
                         }
-                    }
-                };
+                    };
 
-                const canvas = document.createElement('canvas');
-                canvas.id = 'grafico-preferencias';
+                    const canvas = document.createElement('canvas');
+                    canvas.id = 'grafico-preferencias';
 
-                const preferenciasCliente = document.getElementById('preferencias_cliente');
-                preferenciasCliente.innerHTML = '';
-                preferenciasCliente.appendChild(canvas);
+                    const preferenciasCliente = document.getElementById('preferencias_cliente');
+                    preferenciasCliente.innerHTML = '';
+                    preferenciasCliente.appendChild(canvas);
 
-                new Chart(canvas.getContext('2d'), config);
+                    new Chart(canvas.getContext('2d'), config);
 
-                // Otras operaciones después de mostrar el gráfico (si es necesario)
-                $("#consultar_cliente").removeClass("hidden");
-                $("#nuevas_preferencias").removeClass("hidden");
-                $("#nueva_preferencia").text("");
-            })
-            .catch(error => {
-                alert("Ocurrió un error al consultar las preferencias del cliente.");
-            });
+                    // Otras operaciones después de mostrar el gráfico (si es necesario)
+                    $("#consultar_cliente").removeClass("hidden");
+                    $("#nuevas_preferencias").removeClass("hidden");
+                    $("#nueva_preferencia").text("");
+                })
+                .catch(error => {
+                    alert("Ocurrió un error al consultar las preferencias del cliente.");
+                });
         }
 
         function registraPreferencia() {
@@ -206,113 +232,146 @@
 
             fetch('/registra_preferencia/', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ client_id: client_id, preferencia: nueva_preferencia })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.salida) {
-                    $("#salida_registro2").removeClass("hidden");                    
-                    $("#existe_cliente").addClass("hidden"); // Ocultar el nombre del cliente
-                    $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
-                    //$("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
-                    $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
-                    $("#nueva_preferencia").text("");   
-                    $("#salida_registro2").text(data.salida);     
-                    $("#nuevo_cliente").addClass("hidden"); 
-                    Swal.fire({
-                        title: "Registro Exitoso",
-                        icon: "success",
-                        text: "Nueva preferencia se registró con éxito.",
-                        confirmButtonText: "OK"
-                    });              
-                } else {
-                    $("#salida_registro2").addClass("hidden");
-                    $("#nuevo_cliente").addClass("hidden");
+                .then(response => response.json())
+                .then(data => {
+                    if (data.salida) {
+                        $("#salida_registro2").removeClass("hidden");
+                        $("#existe_cliente").addClass("hidden"); // Ocultar el nombre del cliente
+                        $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
+                        //$("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
+                        $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
+                        $("#nueva_preferencia").text("");
+                        $("#salida_registro2").text(data.salida);
+                        $("#nuevo_cliente").addClass("hidden");
+                        Swal.fire({
+                            title: "Registro Exitoso",
+                            icon: "success",
+                            text: "Nueva preferencia se registró con éxito.",
+                            confirmButtonText: "OK"
+                        });
+                    } else {
+                        $("#salida_registro2").addClass("hidden");
+                        $("#nuevo_cliente").addClass("hidden");
+                        Swal.fire({
+                            title: "Registro Exitoso",
+                            icon: "error",
+                            text: "Error al registrar preferencia.",
+                            confirmButtonText: "OK"
+                        });
+                    }
+                })
+                .catch(error => {
                     Swal.fire({
                         title: "Registro Exitoso",
                         icon: "error",
                         text: "Error al registrar preferencia.",
                         confirmButtonText: "OK"
-                    }); 
-                }
-            })
-            .catch(error => {
-                Swal.fire({
-                        title: "Registro Exitoso",
-                        icon: "error",
-                        text: "Error al registrar preferencia.",
-                        confirmButtonText: "OK"
-                    }); 
-            });
+                    });
+                });
         }
 
 
         function RegistraCliente() {
             var client_id = $("#client_id").val();
-            var nombre_cliente = $("#nuevo_nombre_cliente").val();            
+            var nombre_cliente = $("#nuevo_nombre_cliente").val();
             var preferencias_cliente = $("#registro_preferencia").val();
 
             fetch('/registra_cliente/', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ client_id: client_id,nombre_cliente: nombre_cliente, preferencias_cliente: preferencias_cliente })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ client_id: client_id, nombre_cliente: nombre_cliente, preferencias_cliente: preferencias_cliente })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.salida) {
-                    $("#salida_registro2").removeClass("hidden");                    
-                    $("#existe_cliente").addClass("hidden"); // Ocultar el nombre del cliente
-                    $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
-                    $("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
-                    $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
-                    $("#nueva_preferencia").text("");   
-                    $("#salida_registro2").text(data.salida);     
-                    $("#nuevo_cliente").addClass("hidden"); 
-                    Swal.fire({
-                        title: "Registro Exitoso",
-                        icon: "success",
-                        text: "El cliente se registró con éxito.",
-                        confirmButtonText: "OK"
-                    });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.salida) {
+                        $("#salida_registro2").removeClass("hidden");
+                        $("#existe_cliente").addClass("hidden"); // Ocultar el nombre del cliente
+                        $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
+                        $("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
+                        $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
+                        $("#nueva_preferencia").text("");
+                        $("#salida_registro2").text(data.salida);
+                        $("#nuevo_cliente").addClass("hidden");
+                        Swal.fire({
+                            title: "Registro Exitoso",
+                            icon: "success",
+                            text: "El cliente se registró con éxito.",
+                            confirmButtonText: "OK"
+                        });
 
-                             
-                } else {
-                    $("#salida_registro2").addClass("hidden");
-                    $("#nuevo_cliente").addClass("hidden");
-                }
-            })
-            .catch(error => {
-                Swal.fire({
+
+                    } else {
+                        $("#salida_registro2").addClass("hidden");
+                        $("#nuevo_cliente").addClass("hidden");
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
                         title: "Registro Exitoso",
                         icon: "error",
                         text: "Se presento un Error en el Registro.",
                         confirmButtonText: "OK"
                     });
-            });
+                });
         }
 
         function pedirClaveYActualizarModelo() {
-            const claveIngresada = prompt("Por favor, ingresa la clave:");
-            if (claveIngresada === "12345") {
-                var client_id = $("#client_id").val();
-                fetch('/Ejecuta_modelo/', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ client_id: claveIngresada })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert("Modelo: Actualizado ",data.mensaje);
-                })
-                .catch(error => {
-                    alert("Ocurrió un error al consultar al cliente.");
-                });
-            } else {
-                alert("Clave incorrecta. No tienes permiso para actualizar el modelo.");
-            }
+            Swal.fire({
+                title: "Ingresa la clave:",
+                input: "password",
+                showCancelButton: true,
+                confirmButtonText: "Confirmar",
+                cancelButtonText: "Cancelar",
+                inputValidator: (value) => {
+                    if (!value) {
+                        return "Debes ingresar una clave";
+                    }
+                },
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const claveIngresada = result.value;
+                    if (claveIngresada === "12345") {
+                        var client_id = $("#client_id").val();
+                        fetch('/Ejecuta_modelo/', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ client_id: claveIngresada })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                Swal.fire({
+                                    title: "Modelo Actualizado",
+                                    text: data.mensaje,
+                                    icon: "success",
+                                    confirmButtonText: "OK"
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "Ocurrió un error al consultar al cliente.",
+                                    icon: "error",
+                                    confirmButtonText: "OK"
+                                });
+                            });
+                    } else {
+                        Swal.fire({
+                            title: "Clave Incorrecta",
+                            text: "No tienes permiso para actualizar el modelo.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                        });
+                    }
+                }
+            });
         }
+
+
 
     </script>
 </body>
+
 </html>
