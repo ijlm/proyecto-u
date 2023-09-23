@@ -1,54 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Consulta de Cliente</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" type="text/css" href="../static/styles.css"> <!-- Enlaza el archivo CSS externo -->
+    <meta charset="UTF-8">
+
+        <title>Consulta de Cliente</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link rel="stylesheet" type="text/css" href="../static/styles.css"> <!-- Enlaza el archivo CSS externo -->
+
 </head>
 <body>
+    <section class="form-consult">
+        <div class="container">
+            <h1 class="mt-4">Consulta de Cliente</h1>
+            <form id="ClienteRequestForm" class="mt-4">
+                <div class="form-group">
+                    <label for="client_id">ID del cliente:</label>
+                    <input type="text" class="form-control" id="client_id" placeholder="Ingrese el ID del cliente" name="client_id" required minlength="1" maxlength="15">
+                </div>
+                <div class="btn-lb2">
+                    <button type="button" onclick="consultarCliente()">Consultar</button>
+                </div>
+            </form>
+        </div>
+    </section>
     
-    <h1>Consulta de Cliente</h1>
-    <form id="ClienteRequestForm">
-        <label for="client_id">ID del cliente:</label>
-        <input type="text" id="client_id" name="client_id" required>
-        <br>
-        <button type="button" onclick="consultarCliente()">Consultar</button>
-    </form>
     <br>
-    <div id="existe_cliente" class="hidden">        
-        <h2>Nombre cliente: <span id="nombre_cliente"></span></h2>
-    </div>           
-    <div id="consultar_cliente" class="hidden">        
-        <p>Preferencias cliente:<br> <span id="preferencias_cliente"></span></p>
-    </div>    
+    <section id="existe_cliente" class="result-client hidden">
+        <div>        
+            <h3>Nombre cliente: <span id="nombre_cliente"></span></h3>
+        </div>   
+    </section>    
+    <section id="consultar_cliente" class="client-preferences hidden">  
+        <div>        
+            <h3>Preferencias cliente:<br> <span id="preferencias_cliente"></span></h3>
+        </div>    
+    </section>  
+    <section id="nuevo_cliente" class="new-client hidden">
+        <div>
+            <form id="ClienteRequestForm">
+                <h3>Registrar Nuevo cliente</h3>    
+                <input class="form-control" type="text" required min="3" maxlength="20" id="nuevo_nombre_cliente" name="nuevo_nombre_cliente" placeholder="Ingrese el Nombre del cliente">
+                <h3>Preferencias</h3>          
+                <input class="form-control" type="text" required id="registro_preferencia" name="registro_preferencia" placeholder="Ingrese las preferencias del cliente">
+                <br>
+                <div class="btn-lbl">
+                    <button type="button" id="formulario_nueo_cliente" onclick="RegistraCliente()">Registrar</button>                
+                    <button type="button" id="limpiar_nueva_preferencia">Limpiar</button>
+                </div>
+                <div id="registroClienteOK" class="alert alert-primary hidden" role="alert">
+                       Registro Exitoso
+                </div>
 
-    <div id="nuevo_cliente" class="hidden">
-        <form id="ClienteRequestForm">
-            <label >Registrar Nuevo cliente</label>        
-            <label >Nombre:</label>        
-            <input type="text" id="nuevo_nombre_cliente" name="nuevo_nombre_cliente">
-            <label >Preferencias:</label>        
-            <input type="text" id="registro_preferencia" name="registro_preferencia">
+            </form>
+        </div>   
+    </section>
+    <section id="nuevas_preferencias" class="new-order hidden">
+        <div>
+            <h3>Registrar Nuevo Pedido:</h3>        
+            <input type="text" class="form-control"  id="nueva_preferencia" name="nueva_preferencia" placeholder="Ingrese el Pedido del cliente">
             <br>
-            <button type="button" id="formulario_nueo_cliente" onclick="RegistraCliente()">Registrar</button>                
-            <button type="button" id="limpiar_nueva_preferencia">Limpiar</button>
-        </form>
-    </div>   
-
-    <div id="nuevas_preferencias" class="hidden">
-        <h3>Registrar Nuevo Pedido:</h3>        
-        <input type="text" id="nueva_preferencia" name="nueva_preferencia">
-        <br>
-        <button type="button" id="formulario_nuevas_preferencias" onclick="registraPreferencia()">Registrar</button>
-        <button type="button" id="limpiar_nueva_preferencia2">Limpiar</button>
-    </div>
+            <div class="btn-lbl">
+                <button type="button" id="formulario_nuevas_preferencias" onclick="registraPreferencia()">Registrar</button>
+                <button type="button" id="limpiar_nueva_preferencia2">Limpiar</button>
+            </div>
+        </div>
     
     <p id="salida_registro2" class="hidden">Registro:<span></span></p>
-    <p id="actualizarModelo" style="cursor: pointer; text-decoration: underline; color: blue; font-size: 10px; "  onclick="pedirClaveYActualizarModelo()">Actualizar Modelo</p>
+    <p id="actualizarModelo" style="cursor: pointer; text-decoration: underline; color: rgb(201, 201, 221); font-size: 15px; "  onclick="pedirClaveYActualizarModelo()">Actualizar Modelo</p>
+    </section >
 
-
-    <script>
+    <script> 
+      
         document.addEventListener("DOMContentLoaded", function() {            
             document.getElementById("limpiar_nueva_preferencia2").addEventListener("click", function() {
                 document.getElementById("nueva_preferencia").value = "";
@@ -189,18 +214,35 @@
                     $("#salida_registro2").removeClass("hidden");                    
                     $("#existe_cliente").addClass("hidden"); // Ocultar el nombre del cliente
                     $("#consultar_cliente").addClass("hidden"); // Ocultar las preferencias del cliente
-                    $("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
+                    //$("#nuevas_preferencias").addClass("hidden"); // Ocultar nuevs prefere                    
                     $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
                     $("#nueva_preferencia").text("");   
                     $("#salida_registro2").text(data.salida);     
-                    $("#nuevo_cliente").addClass("hidden");               
+                    $("#nuevo_cliente").addClass("hidden"); 
+                    Swal.fire({
+                        title: "Registro Exitoso",
+                        icon: "success",
+                        text: "Nueva preferencia se registró con éxito.",
+                        confirmButtonText: "OK"
+                    });              
                 } else {
                     $("#salida_registro2").addClass("hidden");
                     $("#nuevo_cliente").addClass("hidden");
+                    Swal.fire({
+                        title: "Registro Exitoso",
+                        icon: "error",
+                        text: "Error al registrar preferencia.",
+                        confirmButtonText: "OK"
+                    }); 
                 }
             })
             .catch(error => {
-                alert("Ocurrió un error al registrar la preferencia.");
+                Swal.fire({
+                        title: "Registro Exitoso",
+                        icon: "error",
+                        text: "Error al registrar preferencia.",
+                        confirmButtonText: "OK"
+                    }); 
             });
         }
 
@@ -225,14 +267,27 @@
                     $("#preferencias_cliente").text(""); // Limpiar el contenido de las preferencias
                     $("#nueva_preferencia").text("");   
                     $("#salida_registro2").text(data.salida);     
-                    $("#nuevo_cliente").addClass("hidden");               
+                    $("#nuevo_cliente").addClass("hidden"); 
+                    Swal.fire({
+                        title: "Registro Exitoso",
+                        icon: "success",
+                        text: "El cliente se registró con éxito.",
+                        confirmButtonText: "OK"
+                    });
+
+                             
                 } else {
                     $("#salida_registro2").addClass("hidden");
                     $("#nuevo_cliente").addClass("hidden");
                 }
             })
             .catch(error => {
-                alert("Ocurrió un error al registrar la preferencia.");
+                Swal.fire({
+                        title: "Registro Exitoso",
+                        icon: "error",
+                        text: "Se presento un Error en el Registro.",
+                        confirmButtonText: "OK"
+                    });
             });
         }
 
