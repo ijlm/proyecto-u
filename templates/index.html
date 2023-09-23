@@ -124,11 +124,12 @@
             .then(response => response.json())
             .then(response => {
                 var resultHtml = '<div class="table-container"><table>';
-                resultHtml += '<tr><th>ITEM</th><th>Cantidad</th></tr>'; // Encabezados de la tabla
+                resultHtml += '<tr><th>ITEM</th><th>Cantidad</th><th>Sugerencia</th></tr>'; // Encabezados de la tabla
                 response.forEach(function(item) {
                     resultHtml += '<tr>';
                     resultHtml += '<td>' + item.item + '</td>';
                     resultHtml += '<td>' + item.cantidad + '</td>';
+                    resultHtml += '<td>' + item.SUGERENCIA + '</td>';
                     resultHtml += '</tr>';
                 });
                 resultHtml += '</table></div>';
@@ -294,12 +295,23 @@
         function pedirClaveYActualizarModelo() {
             const claveIngresada = prompt("Por favor, ingresa la clave:");
             if (claveIngresada === "12345") {
-                alert("Modelo actualizado con éxito");
+                var client_id = $("#client_id").val();
+                fetch('/Ejecuta_modelo/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ client_id: claveIngresada })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Modelo: Actualizado ",data.mensaje);
+                })
+                .catch(error => {
+                    alert("Ocurrió un error al consultar al cliente.");
+                });
             } else {
                 alert("Clave incorrecta. No tienes permiso para actualizar el modelo.");
             }
         }
-
 
     </script>
 </body>

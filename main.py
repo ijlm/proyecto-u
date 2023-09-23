@@ -8,6 +8,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
+from apyori import apriori
+
 nltk.download('stopwords')
 nltk.download('punkt')
 
@@ -102,11 +104,17 @@ async def consultar_cliente_api(cliente_request: ClienteRequest):
         preferencias_cliente = pd.DataFrame(words, columns=['item'])
         preferencias_cliente=preferencias_cliente.value_counts().reset_index().head(5)
         preferencias_cliente.columns=['item','cantidad']
+
+        seugerencia=pd.read_csv('modelo/modelo_apriori.csv')
+        preferencias_cliente=preferencias_cliente.merge(seugerencia,how='left',left_on='item',right_on='PEDIDO')        
+        preferencias_cliente=preferencias_cliente[['item','cantidad','SUGERENCIA']].fillna('NA')        
         preferencias_cliente=preferencias_cliente.to_dict(orient='records')
+        
+
     except Exception as e:
         return {"error":str(e) }   
     if preferencias_cliente:
-        return preferencias_cliente#{"preferencias_cliente": preferencias_cliente}    
+        return preferencias_cliente
     else:
         return {"mensaje": "No se encontró el cliente con el ID especificado."}
 
@@ -129,7 +137,50 @@ async def registra_preferencia_api(cliente_request: ClienteRequest2):
         return {"salida":"Registro Exitoso"}
     except Exception as e:
         return {"error":str(e)}
-    
+
+@app.post("/Ejecuta_modelo/")
+async def existe_cliente_api(cliente_request: ClienteRequest):
+    if cliente_request.client_id=="12345":
+        try:
+            conn = conection.conectar_db() 
+            cursor = conn.cursor()
+            query = f"SELECT prefencia FROM preferencias"
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            conn.close()
+            
+            rows = pd.DataFrame(rows, columns=["Pedido"])
+            rows["Pedido"] = rows["Pedido"].str.replace(" ", ",")
+            rows=rows['Pedido'].str.split(',', expand=True, n=5)
+
+            Modelo_apriori(rows)
+            
+            return {"mensaje": "modelo actualizado"}
+        except Exception as e:
+            return {"error":str(e) }        
+    else:
+        return {"mensaje": "Clave errada."}   
+
+def Modelo_apriori(data):    
+    transacts = []
+    for i in range(0, len(data)):
+        transacts.append([str(data.values[i,j]) for j in range(0, 4)])
+
+    rules = apriori(transactions = transacts, min_support = 0.003, min_confidence = 0.2, min_lift = 3, min_length = 2, max_length = 2)
+
+    def inspect(output):
+        Left_Hand_Side = [tuple(result[2][0][0])[0] for result in output]
+        support = [result[1] for result in output]
+        confidence = [result[2][0][2] for result in output]
+        lift = [result[2][0][3] for result in output]
+        Right_Hand_Side = [tuple(result[2][0][1])[0] for result in output]
+        return list(zip(Left_Hand_Side, support, confidence, lift, Right_Hand_Side))
+
+    output = list(rules)
+    output_data = pd.DataFrame(inspect(output), columns = ['PEDIDO', 'Support', 'Confidence', 'Lift', 'SUGERENCIA'])
+
+    output=output_data.groupby('PEDIDO')['SUGERENCIA'].apply(', '.join).reset_index()
+    output.to_csv('modelo/modelo_apriori.csv',index=False)
 
 @app.get("/")
 async def index(request: Request):
