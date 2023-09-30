@@ -64,7 +64,7 @@ class ClienteRequest3(BaseModel):
     preferencias_cliente: str
 
 @app.post("/registra_cliente/")
-async def existe_cliente_api(cliente_request: ClienteRequest3):    
+async def registra_cliente_api(cliente_request: ClienteRequest3):    
     try:        
         conn = conection.conectar_db() 
         cursor = conn.cursor()
@@ -139,7 +139,7 @@ async def registra_preferencia_api(cliente_request: ClienteRequest2):
         return {"error":str(e)}
 
 @app.post("/Ejecuta_modelo/")
-async def existe_cliente_api(cliente_request: ClienteRequest):
+async def Ejecuta_modelo_api(cliente_request: ClienteRequest):
     if cliente_request.client_id=="12345":
         try:
             conn = conection.conectar_db() 
@@ -151,7 +151,7 @@ async def existe_cliente_api(cliente_request: ClienteRequest):
             
             rows = pd.DataFrame(rows, columns=["Pedido"])
             rows["Pedido"] = rows["Pedido"].str.replace(" ", ",")
-            rows=rows['Pedido'].str.split(',', expand=True, n=5)
+            rows=rows['Pedido'].str.split(',', expand=True, n=6)
 
             Modelo_apriori(rows)
             
@@ -164,7 +164,7 @@ async def existe_cliente_api(cliente_request: ClienteRequest):
 def Modelo_apriori(data):    
     transacts = []
     for i in range(0, len(data)):
-        transacts.append([str(data.values[i,j]) for j in range(0, 4)])
+        transacts.append([str(data.values[i,j]) for j in range(0, 5)])
 
     rules = apriori(transactions = transacts, min_support = 0.003, min_confidence = 0.2, min_lift = 3, min_length = 2, max_length = 2)
 
