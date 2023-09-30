@@ -166,7 +166,7 @@ def Modelo_apriori(data):
     for i in range(0, len(data)):
         transacts.append([str(data.values[i,j]) for j in range(0, 5)])
 
-    rules = apriori(transactions = transacts, min_support = 0.003, min_confidence = 0.2, min_lift = 3, min_length = 2, max_length = 2)
+    rules = apriori(transactions = transacts, min_support = 0.003, min_confidence = 0.1, min_lift = 3, min_length = 2, max_length = 2)
 
     def inspect(output):
         Left_Hand_Side = [tuple(result[2][0][0])[0] for result in output]
