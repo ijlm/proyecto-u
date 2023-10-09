@@ -8,7 +8,8 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import string
-from apyori import apriori
+from mlxtend.frequent_patterns import apriori
+from mlxtend.frequent_patterns import association_rules
 
 nltk.download('stopwords')
 nltk.download('punkt')
@@ -104,12 +105,11 @@ async def consultar_cliente_api(cliente_request: ClienteRequest):
         preferencias_cliente = pd.DataFrame(words, columns=['item'])
         preferencias_cliente=preferencias_cliente.value_counts().reset_index().head(5)
         preferencias_cliente.columns=['item','cantidad']
-
+        print(preferencias_cliente)
         seugerencia=pd.read_csv('modelo/modelo_apriori.csv')
         preferencias_cliente=preferencias_cliente.merge(seugerencia,how='left',left_on='item',right_on='PEDIDO')        
-        preferencias_cliente=preferencias_cliente[['item','cantidad','SUGERENCIA']].fillna('NA')        
-        preferencias_cliente=preferencias_cliente.to_dict(orient='records')
-        
+        preferencias_cliente=preferencias_cliente[['item','cantidad','SUGERENCIA']].head(4).fillna('NA')        
+        preferencias_cliente=preferencias_cliente.to_dict(orient='records')        
 
     except Exception as e:
         return {"error":str(e) }   
@@ -147,11 +147,9 @@ async def Ejecuta_modelo_api(cliente_request: ClienteRequest):
             query = f"SELECT prefencia FROM preferencias"
             cursor.execute(query)
             rows = cursor.fetchall()
-            conn.close()
-            
+            conn.close()            
             rows = pd.DataFrame(rows, columns=["Pedido"])
-            rows["Pedido"] = rows["Pedido"].str.replace(" ", ",")
-            rows=rows['Pedido'].str.split(',', expand=True, n=6)
+            rows['Pedido'] =rows['Pedido'].str.split()           
 
             Modelo_apriori(rows)
             
@@ -162,24 +160,13 @@ async def Ejecuta_modelo_api(cliente_request: ClienteRequest):
         return {"mensaje": "Clave errada."}   
 
 def Modelo_apriori(data):    
-    transacts = []
-    for i in range(0, len(data)):
-        transacts.append([str(data.values[i,j]) for j in range(0, 5)])
-
-    rules = apriori(transactions = transacts, min_support = 0.003, min_confidence = 0.1, min_lift = 3, min_length = 2, max_length = 2)
-
-    def inspect(output):
-        Left_Hand_Side = [tuple(result[2][0][0])[0] for result in output]
-        support = [result[1] for result in output]
-        confidence = [result[2][0][2] for result in output]
-        lift = [result[2][0][3] for result in output]
-        Right_Hand_Side = [tuple(result[2][0][1])[0] for result in output]
-        return list(zip(Left_Hand_Side, support, confidence, lift, Right_Hand_Side))
-
-    output = list(rules)
-    output_data = pd.DataFrame(inspect(output), columns = ['PEDIDO', 'Support', 'Confidence', 'Lift', 'SUGERENCIA'])
-
-    output=output_data.groupby('PEDIDO')['SUGERENCIA'].apply(', '.join).reset_index()
+    oht = pd.get_dummies(data['Pedido'].apply(pd.Series).stack()).groupby(level=0).sum()
+    frequent_itemsets = apriori(oht, min_support=0.1, use_colnames=True)
+    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)       
+    rules=rules[['antecedents','consequents']]
+    rules['PEDIDO']=rules['antecedents'].apply(lambda x: ', '.join(x))
+    rules['SUGERENCIA']=rules['consequents'].apply(lambda x: ', '.join(x))
+    output=rules[['PEDIDO','SUGERENCIA']].groupby('PEDIDO')['SUGERENCIA'].apply('| '.join).reset_index()  
     output.to_csv('modelo/modelo_apriori.csv',index=False)
 
 @app.get("/")
@@ -189,4 +176,4 @@ async def index(request: Request):
 
 #if __name__ == "__main__":
 #    import uvicorn
-#    uvicorn.run(app, host="127.0.0.1", port=8000)
+#    uvicorn.run(app, host="127.0.0.1", port=80)
