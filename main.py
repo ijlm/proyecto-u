@@ -105,7 +105,6 @@ async def consultar_cliente_api(cliente_request: ClienteRequest):
         preferencias_cliente = pd.DataFrame(words, columns=['item'])
         preferencias_cliente=preferencias_cliente.value_counts().reset_index().head(5)
         preferencias_cliente.columns=['item','cantidad']
-        print(preferencias_cliente)
         seugerencia=pd.read_csv('modelo/modelo_apriori.csv')
         preferencias_cliente=preferencias_cliente.merge(seugerencia,how='left',left_on='item',right_on='PEDIDO')        
         preferencias_cliente=preferencias_cliente[['item','cantidad','SUGERENCIA']].head(4).fillna('NA')        
