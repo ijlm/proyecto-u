@@ -105,10 +105,9 @@ async def consultar_cliente_api(cliente_request: ClienteRequest):
         preferencias_cliente = pd.DataFrame(words, columns=['item'])
         preferencias_cliente=preferencias_cliente.value_counts().reset_index().head(5)
         preferencias_cliente.columns=['item','cantidad']
-        print(preferencias_cliente)
         seugerencia=pd.read_csv('modelo/modelo_apriori.csv')
-        preferencias_cliente=preferencias_cliente.merge(seugerencia,how='left',left_on='item',right_on='PEDIDO')        
-        preferencias_cliente=preferencias_cliente[['item','cantidad','SUGERENCIA']].head(4).fillna('NA')        
+        preferencias_cliente=preferencias_cliente.merge(seugerencia,how='left',left_on='item',right_on='PEDIDO')                
+        preferencias_cliente=preferencias_cliente[['item','cantidad','SUGERENCIA']].fillna('NA')        
         preferencias_cliente=preferencias_cliente.to_dict(orient='records')        
 
     except Exception as e:
@@ -159,14 +158,16 @@ async def Ejecuta_modelo_api(cliente_request: ClienteRequest):
     else:
         return {"mensaje": "Clave errada."}   
 
-def Modelo_apriori(data):    
-    oht = pd.get_dummies(data['Pedido'].apply(pd.Series).stack()).groupby(level=0).sum()
+def Modelo_apriori(data):  
+    oht = pd.get_dummies(data['Pedido'].apply(pd.Series).stack(), dtype=bool).groupby(level=0).sum()
     frequent_itemsets = apriori(oht, min_support=0.1, use_colnames=True)
-    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)       
+    rules = association_rules(frequent_itemsets, metric="lift", min_threshold=1)
+    rules = rules[rules['consequents'].apply(lambda x: len(x) <= 4)]
     rules=rules[['antecedents','consequents']]
     rules['PEDIDO']=rules['antecedents'].apply(lambda x: ', '.join(x))
-    rules['SUGERENCIA']=rules['consequents'].apply(lambda x: ', '.join(x))
+    rules['SUGERENCIA']=rules['consequents'].apply(lambda x: ', '.join(x))    
     output=rules[['PEDIDO','SUGERENCIA']].groupby('PEDIDO')['SUGERENCIA'].apply('| '.join).reset_index()  
+    output['SUGERENCIA']=output['SUGERENCIA'].str.slice(stop=50)
     output.to_csv('modelo/modelo_apriori.csv',index=False)
 
 @app.get("/")
